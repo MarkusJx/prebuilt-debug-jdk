@@ -33,7 +33,9 @@ jobs:
         working-directory: jdk
       - name: Create archive
         run: |
-          mv jdk/build/linux-*/jdk jdk
+          mkdir out
+          mv jdk/build/linux-*/jdk out/jdk
+          cd out
           zip -r jdk.zip jdk
       
       - name: Upload a Build Artifact
