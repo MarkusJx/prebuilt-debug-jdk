@@ -31,7 +31,7 @@ jobs:
         run: bash configure --with-debug-level=fastdebug --enable-asan --enable-warnings-as-errors=no
         working-directory: jdk
       - name: Build
-        run: make images
+        run: make images JOBS=2
         working-directory: jdk
       - name: Upload a Build Artifact
         uses: actions/upload-artifact@v3.1.2
