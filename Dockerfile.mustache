@@ -15,7 +15,7 @@ RUN bash configure --with-debug-level=fastdebug --enable-warnings-as-errors=no \
 RUN make images
 RUN mkdir out && mv build/linux-*/jdk jdk
 
-FROM debian:{{ VERSION }}
+FROM debian:{{ VERSION }}-slim
 RUN apt update && apt upgrade -y && apt install -y curl build-essential unzip libclang-dev git clang &&\
     curl https://sh.rustup.rs -sSf | sh -s -- -y && PATH="$PATH:/root/.cargo/bin"\
     rustup default nightly && PATH="$PATH:/root/.cargo/bin"\
