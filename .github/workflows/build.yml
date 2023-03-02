@@ -6,11 +6,14 @@ on:
       version:
         description: 'JDK version to build'
         required: true
+      debian-version:
+        description: 'Debian version'
+        required: true
       boot-version:
         description: 'Version of the boot jdk to use'
         required: true
       draft:
-        description: 'Whether to create a pre-release'
+        description: 'Create a pre-release'
         required: false
         type: boolean
         default: 'false'
