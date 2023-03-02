@@ -7,7 +7,7 @@ RUN export DEBIAN_FRONTEND=noninteractive; \
     libasound2-dev libffi-dev openjdk-{{ BOOT_JDK_VERSION }}-jdk libfontconfig1-dev clang
 
 WORKDIR /app
-RUN git clone https://github.com/openjdk/jdk -b {{ JDK_VERSION }}
+RUN git clone https://github.com/openjdk/jdk -b jdk-{{ JDK_VERSION }}
 WORKDIR /app/jdk
 
 RUN bash configure --with-debug-level=fastdebug --enable-warnings-as-errors=no \
