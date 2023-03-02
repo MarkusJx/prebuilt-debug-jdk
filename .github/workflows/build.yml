@@ -12,53 +12,37 @@ on:
       boot-version:
         description: 'Version of the boot jdk to use'
         required: true
-      draft:
-        description: 'Create a pre-release'
-        required: false
-        type: boolean
-        default: 'false'
+
+env:
+  REGISTRY: ghcr.io
+  IMAGE_NAME: debug-openjdk
 
 jobs:
   build:
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+      id-token: write
 
     steps:
       - uses: actions/checkout@v3
-      - name: Install build dependencies
-        run: |
-          sudo apt update && sudo apt-get install -y libfreetype6-dev libcups2-dev libx11-dev \
-            libxext-dev libxrender-dev libxrandr-dev libxtst-dev libxt-dev libasound2-dev \
-            libffi-dev autoconf
-      - name: Clone sources
-        run: git clone https://github.com/openjdk/jdk -b ${{github.event.inputs.version}}
-      - name: Setup Java JDK
-        uses: actions/setup-java@v3.10.0
+      - name: Create dockerfile
+        uses: edgardleal/mustache-template-action@v1.0.4
+        env:
+          VERSION: ${{github.event.inputs.debian-version}}
+          JDK_VERSION: ${{github.event.inputs.version}}
+          BOOT_JDK_VERSION: ${{github.event.inputs.boot-version}}
         with:
-          java-version: ${{github.event.inputs.boot-version}}
-          distribution: 'temurin'
-      - name: Configure
+          input: Dockerfile.mustache
+          output: Dockerfile
+      - name: Build image
+        run: docker build . --file Dockerfile --tag $IMAGE_NAME
+      - name: Push image
         run: |
-          bash configure --with-debug-level=fastdebug --enable-asan \
-            --enable-warnings-as-errors=no --with-toolchain-type=clang
-        working-directory: jdk
-      - name: Build
-        run: make images
-        working-directory: jdk
-      - name: Create archive
-        run: |
-          mkdir out
-          mv jdk/build/linux-*/jdk out/jdk
-          cd out
-          zip -r jdk-${{runner.os}}-${{runner.arch}}.zip jdk
-      
-      - name: Upload a Build Artifact
-        uses: actions/upload-artifact@v3.1.2
-        with:
-          path: out/jdk.zip
-      - name: Create Release
-        uses: ncipollo/release-action@v1
-        with:
-          draft: ${{github.event.inputs.draft == 'true'}}
-          tag: ${{github.event.inputs.version}}
-          artifacts: "out/jdk-*.zip"
-          token: ${{ secrets.GITHUB_TOKEN }}
+          IMAGE_ID=$REGISTRY/${{ github.repository }}
+          # Change all uppercase to lowercase
+          IMAGE_ID=$(echo $IMAGE_ID | tr '[A-Z]' '[a-z]')
+          IMAGE_VERSION=${{github.event.inputs.version}}-${{github.event.inputs.debian-version}}
+          docker tag $IMAGE_NAME $IMAGE_ID:$IMAGE_VERSION
+          docker push $IMAGE_ID:$IMAGE_VERSION
