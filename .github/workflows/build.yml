@@ -41,9 +41,16 @@ jobs:
           mkdir out
           mv jdk/build/linux-*/jdk out/jdk
           cd out
-          zip -r jdk.zip jdk
+          zip -r jdk-${{runner.os}}-${{runner.arch}}.zip jdk
       
       - name: Upload a Build Artifact
         uses: actions/upload-artifact@v3.1.2
         with:
           path: out/jdk.zip
+      - name: Create Release
+        uses: ncipollo/release-action@v1
+        with:
+          draft: false
+          tag: ${{github.event.inputs.version}}
+          artifacts: "out/jdk-*.zip"
+          token: ${{ secrets.GITHUB_TOKEN }}
