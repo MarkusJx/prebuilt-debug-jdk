@@ -18,7 +18,7 @@ RUN mv build/linux-*/images/jdk /jdk
 RUN /jdk/bin/java --version
 
 FROM debian:{{ VERSION }}-slim
-RUN apt update && apt upgrade -y && apt install -y curl build-essential unzip libclang-dev git clang &&\
+RUN apt update && apt upgrade -y && apt install -y curl build-essential libclang-dev clang &&\
     curl https://sh.rustup.rs -sSf | sh -s -- -y && PATH="$PATH:/root/.cargo/bin"\
     rustup default nightly && PATH="$PATH:/root/.cargo/bin"\
     rustup component add rust-src --toolchain nightly-x86_64-unknown-linux-gnu
