@@ -12,6 +12,11 @@ on:
       boot-version:
         description: 'Version of the boot jdk to use'
         required: true
+      set-latest:
+        description: 'Set as latest image'
+        required: false
+        type: boolean
+        default: 'false'
 
 env:
   REGISTRY: ghcr.io
@@ -51,3 +56,10 @@ jobs:
           IMAGE_VERSION=$JDK_VERSION-${{github.event.inputs.debian-version}}
           docker tag $IMAGE_NAME $IMAGE_ID:$IMAGE_VERSION
           docker push $IMAGE_ID:$IMAGE_VERSION
+      - name: Push latest image
+        if: ${{github.event.inputs.set-latest == 'true'}}
+        run: |
+          IMAGE_ID=$REGISTRY/${{ github.repository }}
+          IMAGE_ID=$(echo $IMAGE_ID | tr '[A-Z]' '[a-z]')
+          docker tag $IMAGE_NAME $IMAGE_ID:latest
+          docker push $IMAGE_ID:latest
