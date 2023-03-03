@@ -29,7 +29,7 @@ ENV JAVA_HOME=/jdk
 ENV RUSTFLAGS="-Clinker=clang -Zsanitizer=address"
 ENV RUSTDOCFLAGS="-Clinker=clang -Zsanitizer=address"
 ENV ASAN_OPTIONS="detect_leaks=0"
-ENV PATH="$PATH:/root/.cargo/bin"
+ENV PATH="$PATH:/root/.cargo/bin:/jdk/bin"
 
 WORKDIR /app
 CMD [ "/bin/bash" ]
