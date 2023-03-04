@@ -1,5 +1,5 @@
 # prebuilt-debug-jdk
-Prebuilt openjdk images with debug and asan enabled and rust nightly installed
+Prebuilt openjdk images with debug and asan enabled
 
 Example usage in a github workflow using [`addnab/docker-run-action`](https://github.com/addnab/docker-run-action):
 ```yml
@@ -10,8 +10,7 @@ Example usage in a github workflow using [`addnab/docker-run-action`](https://gi
     image: ghcr.io/markusjx/prebuilt-debug-jdk:17-bullseye
     options: -v ${{ github.workspace }}:/app
     run: |
-      cargo update
-      cargo test --all-features -Zbuild-std --target=x86_64-unknown-linux-gnu
+      # Build steps here
 ```
 
 If there are errors about asan symbols not being found, simply point the `LD_PRELOAD`
