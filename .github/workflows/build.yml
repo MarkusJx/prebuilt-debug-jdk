@@ -39,7 +39,7 @@ jobs:
           JDK_VERSION: ${{github.event.inputs.version}}
           BOOT_JDK_VERSION: ${{github.event.inputs.boot-version}}
         with:
-          input: Dockerfile.mustache
+          input: Dockerfile-template.hbs
           output: Dockerfile
 
       - name: Build image
