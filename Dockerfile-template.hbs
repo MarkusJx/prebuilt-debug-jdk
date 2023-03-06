@@ -18,18 +18,10 @@ RUN mv build/linux-*/images/jdk /jdk
 RUN /jdk/bin/java --version
 
 FROM debian:{{ VERSION }}-slim
-RUN apt update && apt upgrade -y && apt install -y curl build-essential libclang-dev clang &&\
-    curl https://sh.rustup.rs -sSf | sh -s -- -y && PATH="$PATH:/root/.cargo/bin"\
-    rustup default nightly && PATH="$PATH:/root/.cargo/bin"\
-    rustup component add rust-src --toolchain nightly-x86_64-unknown-linux-gnu
 
 COPY --from=build /jdk /jdk
 
-ENV JAVA_HOME=/jdk
-ENV RUSTFLAGS="-Clinker=clang -Zsanitizer=address"
-ENV RUSTDOCFLAGS="-Clinker=clang -Zsanitizer=address"
-ENV ASAN_OPTIONS="detect_leaks=0"
-ENV PATH="$PATH:/root/.cargo/bin:/jdk/bin"
+ENV JAVA_HOME="/jdk"
+ENV PATH="$PATH:/jdk/bin"
 
-WORKDIR /app
 CMD [ "/bin/bash" ]
